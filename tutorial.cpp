@@ -16,29 +16,49 @@ int main() {
     noecho();                 // Don't echo typed characters
     keypad(stdscr, TRUE);     // Enable special keys (arrows, etc.)
 
-    printw("Hello World. Press q to quit.");
     refresh();
 
     int ch;
     int x = 0, y = 1;         // initialize coords
+    printw("%d, %d", x,y);
 
     while ((ch = getch()) != 'q') {  // loop until q pressed
         string date = get_date();
         int size = date.length();
-        x = size + 2;
 
-        printw("%c", ch);
-        refresh();
-        x++;                  // move forward each time
-        move(y, x);           // move cursor to (y,x)
         if(ch == '\n' || ch == KEY_ENTER){
             y++;
             x = 0; // reset x to start of line
             move(y, x);
             
-
-            printw("%s > ", date.c_str()); // use c_str() here
+            //printw("%s > ", date.c_str()); // use c_str() here
         }
+        if(ch == KEY_UP){
+            y = (y > 0 ? y - 1 : 0);
+            move(y, x);
+            refresh();
+        }
+        else if(ch == KEY_DOWN){
+            move(y++, x);
+            refresh();
+        }
+        else if(ch == KEY_RIGHT){
+            move(y, x++);
+            refresh();
+        }
+        else if(ch == KEY_LEFT){
+            //x = (x > 0 ? x - 1 : 0);
+            move(y, x--);
+            refresh();
+        }
+        else {
+            printw("%c", ch);
+            refresh();
+            x++;                  // move forward each time
+            move(y, x);           // move cursor to (y,x)
+        }
+            
+
     }
 
     endwin();                 // Always restore terminal before exiting

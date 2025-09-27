@@ -1,0 +1,6 @@
+[] Fix the terminal navigation 
+[] Add small startup window to input name, date and device id
+[] Keep the time for the logging rows to only be hour:minute format (discard the date)
+[] Add failchecks
+[] Keep a small window in the top with the basic info inputted, this window should somehow be static and not move (follow the screen if scrolling down/up)
+[] Find some way to storage and parse the data for symptoms and fixes
