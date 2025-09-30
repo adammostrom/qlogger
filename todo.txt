@@ -4,3 +4,6 @@
 [] Add failchecks
 [] Keep a small window in the top with the basic info inputted, this window should somehow be static and not move (follow the screen if scrolling down/up)
 [] Find some way to storage and parse the data for symptoms and fixes
+	- Like a postgres database perhaps
+[] Implement some kind of "fault list" or "fault checker" that provides a list of common symptoms
+[] Add alternative way (array) to store keybinds so its easy to edit and remove.
