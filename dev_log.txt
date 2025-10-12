@@ -1,0 +1,4 @@
+2025-10-12:
+
+[] Generaliz the box function so it can draw multiple boxes, make a struct for the box parameters to be passed into the function.
+[] Make the utility button box to draw (space) the buttons correctly like the box function does, have a list of buttons and what they do, then just give that list to the button box to draw them up.
