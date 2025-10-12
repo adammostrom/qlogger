@@ -1,0 +1,4 @@
+Fl_Input is a class from the FLTK (Fast Light Toolkit) library used to create single-line text input widgets in graphical user interfaces. The input variable is an instance of this class, representing a specific text input field.
+
+Fl_Window win declares and defines an instance of the Fl_Window class, which is part of the FLTK (Fast Light Toolkit) library. This class represents a top-level window in a graphical user interface.
+

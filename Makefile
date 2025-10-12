@@ -1,6 +1,8 @@
-.PHONY: run
+.PHONY: run, runqt
 
 run:
-	@g++ tutorial.cpp -o tutorial -lncurses
+	@clang++ tutorial.cpp -o tutorial -lncurses
 	@./tutorial
 	
+runqt:
+	g++ testQt.cpp -o testQt `pkg-config --cflags --libs Qt6Widgets`

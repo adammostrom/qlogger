@@ -7,3 +7,69 @@
 	- Like a postgres database perhaps
 [] Implement some kind of "fault list" or "fault checker" that provides a list of common symptoms
 [] Add alternative way (array) to store keybinds so its easy to edit and remove.
+
+
+[] Add start menu like 1.New Repair, 2. Find repair, 3. Logs, 4. Settings etc
+
+
+
+Add 'Y' as an accepted input too if you want case-insensitive quit.
+
+
+
+
+// REUSABLE POPUP WINDOW (DYNAMIC):
+
+void popup(const std::vector<std::string>& lines) {
+    int rows, cols;
+    getmaxyx(stdscr, rows, cols);
+
+    // find longest line
+    int max_width = 0;
+    for (const auto& line : lines)
+        max_width = std::max(max_width, (int)line.length());
+
+    // add padding
+    int height = lines.size() + 4;
+    int width  = max_width + 4;
+
+    // center it
+    int starty = (rows - height) / 2;
+    int startx = (cols - width) / 2;
+
+    WINDOW* win = newwin(height, width, starty, startx);
+    box(win, 0, 0);
+
+    // print lines centered inside the window
+    for (int i = 0; i < (int)lines.size(); i++) {
+        mvwprintw(win, i + 2, 2, "%s", lines[i].c_str());
+    }
+
+    mvwprintw(win, height - 2, 2, "Press any key...");
+    wrefresh(win);
+
+    wgetch(win);
+    delwin(win);
+
+    touchwin(stdscr);
+    refresh();
+}
+
+
+    // --- INFO BOX ---
+    int info_height = 5;
+    int info_width  = cols - 2;
+    int info_starty = 0;
+    int info_startx = 1;
+
+    WINDOW* info_win = newwin(info_height, info_width, info_starty, info_startx);
+    box(info_win, 0, 0);
+    mvwprintw(info_win, 1, 2, "INFORMATION BOX!");
+    mvwprintw(info_win, 2, 2, "DEVICE ID: 12345");
+    wrefresh(info_win);
+
+    // --- MAIN WINDOW (text area) ---
+    int text_starty = info_height + 1;
+    WINDOW* text_win = newwin(rows - text_starty, cols, text_starty, 0);
+    scrollok(text_win, TRUE);  // allow scrolling
+    keypad(text_win, TRUE);

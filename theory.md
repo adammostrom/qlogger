@@ -88,3 +88,44 @@ In the windows:
     wattroff(win, COLOR_PAIR(1));
 ```
 
+## KEYS
+
+Ctrl key combos map to ASCII control codes — basically the key’s letter with the upper bits cleared.
+
+General rule:
+
+Ctrl + A → 1
+Ctrl + B → 2
+...
+Ctrl + Z → 26
+
+Or simply:
+Ctrl + key  ==  key & 0x1F
+
+## RAW();
+
+What raw() actually does
+
+Disables all line buffering.
+
+Sends every keystroke directly to your program (including Ctrl+C, Ctrl+Z, etc.).
+
+Bypasses flow control (so Ctrl+Q and Ctrl+S reach ncurses).
+
+But it also means you’re responsible for handling those control keys yourself.
+So if you hit Ctrl+C in raw mode — your app won’t exit unless you handle it.
+
+```C
+    raw();     // enter raw mode
+    // ...
+    noraw();   // go back to "cbreak" mode
+```
+
+When you’re done with ncurses (before exit), always call:
+```C 
+    endwin(); 
+``` 
+
+- Turns off raw/cbreak/noecho modes
+- Restores echo
+- Restores the cursor and terminal settings

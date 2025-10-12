@@ -1,0 +1,24 @@
+Idea, have a header that contians the date, the device id, and the initial versions upon booting up.
+This header is prominent in the log file and will be saved as header for the exported csv file.
+
+Each row (log entry) will be in 4 columns:
+
+timestamp | symptom/issue | solution | result
+
+example:
+
+timestamp | symptom/issue | solution | result
+> 10:12	| black not found | black side repair to alfa | SUCCESS
+
+Problem: some(most) symptoms are related, as in (if black not showing, neither does copro).
+
+Either I have to divide these two into two separate issues that can be both solved by the same solution, anad make two entries, like:
+
+
+10:12	| black not found | black side repair to alfa | SUCCESS
+10:12	| copro not found | black side repair to alfa | SUCCESS
+
+Or the alternative would be to group them somehow, like:
+
+not_found(black, copro)
+
