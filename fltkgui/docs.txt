@@ -2,3 +2,6 @@ Fl_Input is a class from the FLTK (Fast Light Toolkit) library used to create si
 
 Fl_Window win declares and defines an instance of the Fl_Window class, which is part of the FLTK (Fast Light Toolkit) library. This class represents a top-level window in a graphical user interface.
 
+dependency: sudo apt install libfltk1.3
+dependency: sudo apt install libfltk1.3-dev
+

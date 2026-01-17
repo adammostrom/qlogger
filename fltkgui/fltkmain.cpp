@@ -16,14 +16,46 @@
 #define BOX_MARGINS 50
 #define BOX_START_X 20
 
+struct Box;
 
-struct Field { const char* label; };
+
+// STRUCTURES
+struct Field { 
+    std::string label;
+    std::string value;
+};
+
+struct Freespace {
+    int freespace;
+
+    void add(int h){
+        freespace+=h + MARGIN;
+    }
+};
+
+// FUNCTIONS 
+void start_parameters(Fl_Window* win, const std::vector<Field> &fields, const int cols);
+void button_box(Fl_Window* win, int start_y);
+void draw_box(Fl_Window* win, Box& box, Freespace& freespace);
+
+struct Box {
+    std::string name;
+    std::vector<Field> fields;
+    int cols;
+
+    void draw(Fl_Window* win, Freespace& freespace){
+        draw_box(win, *this, freespace);
+    };
+};
+
+
 std::vector<Fl_Input*> inputs;  // global list of inputs
 
-std::vector<int> box_heights;
 
-void start_parameters(Fl_Window* win, const std::vector<Field> &fields);
-void button_box(Fl_Window* win, int start_y);
+
+
+//std::vector<int> box_heights;
+
 
 
 void save_cb(Fl_Widget*, void*) {
@@ -35,8 +67,13 @@ void save_cb(Fl_Widget*, void*) {
     file.close();
 }
 
+
+
+
 int main() {
     Fl_Window win(WINDOW_WIDTH, WINDOW_HEIGHT, "Logger");
+
+    Freespace freespace{BOX_MARGINS};
 
 
 
@@ -45,14 +82,21 @@ int main() {
     };
     
     //MENU_WINDOW(); // A temporary popup window
-    
-    start_parameters(&win, fields);
 
-    int freespace = BOX_MARGINS;
-    for(int &box_size : box_heights){
-        freespace += box_size;
-    }
-    button_box(&win, freespace);
+
+    // Create a Box with its own fields array
+    Box device_box{
+        "devices", fields, 2
+    };
+
+    Box software_versions_box{
+        "Software Versions",
+        fields,
+        1
+    };
+    
+    device_box.draw(&win, freespace);
+    software_versions_box.draw(&win, freespace);
     
 
     win.end();
@@ -61,17 +105,57 @@ int main() {
 }
 
 
-
-// TODO: Make Struct for a box, with parameters: x, y, width, height, label, columns
-void start_parameters(Fl_Window* win, const std::vector<Field>& fields){
-
+void draw_box(Fl_Window* win, Box& box, Freespace& freespace){
+    int cols = box.cols;
+    
     int box_start_x = BOX_START_X;
-    int box_start_y = ENTITY_SPACING;
-    const int cols = 2;
+    int box_start_y = freespace.freespace;
     int col_width = ((WINDOW_WIDTH - (MARGIN * (cols + 1))) - box_start_x) / cols;
     int y = MARGIN;
 
-    int rows = (fields.size() + (cols - 1)) / cols;  // ceil division
+    // Cieling division. New row drawn when fields.size > cols.
+    int rows = (box.fields.size() + (cols - 1)) / cols; 
+    int group_box_height = rows * (TEXT_BOX_HEIGHT + MARGIN) + MARGIN;
+
+    win->begin();
+    Fl_Group* group = new Fl_Group(box_start_x, box_start_y, WINDOW_WIDTH - MARGIN, group_box_height, box.name.c_str());
+
+    group->box(FL_UP_BOX); // visualize bounds
+    group->align(FL_ALIGN_TOP_LEFT);
+    group->labelsize(20);
+    group->labelfont(5);
+    group->labelcolor(FL_BLACK);
+
+
+    // Come back to this to edit which input structure the data is saved to.
+    for (size_t i = 0; i < box.fields.size(); ++i) {
+        int col = i % cols;
+        int row = i / cols;
+
+        int x = box_start_x + MARGIN  + col * (col_width + MARGIN);
+        y = box_start_y + MARGIN + row * (TEXT_BOX_HEIGHT + MARGIN);
+
+        auto* input = new Fl_Input(x, y, col_width, TEXT_BOX_HEIGHT, box.fields[i].label.c_str());
+        input->align(FL_ALIGN_TOP_LEFT);  // label above box
+        inputs.push_back(input);
+
+    }
+
+    freespace.add(group_box_height);
+    group->end();  // IMPORTANT!
+    win->end();
+}
+
+// TODO: Make Struct for a box, with parameters: x, y, width, height, label, columns
+/* void start_parameters(Fl_Window* win, const std::vector<Field>& fields, const int cols){
+
+    int box_start_x = BOX_START_X;
+    int box_start_y = ENTITY_SPACING;
+    //const int cols = 2;
+    int col_width = ((WINDOW_WIDTH - (MARGIN * (cols + 1))) - box_start_x) / cols;
+    int y = MARGIN;
+
+    int rows = (fields.size() + (cols - 1)) / cols;  // ceiling division (new row will only be drawn when the amount of elements in the fields array is larger than the amount of columns )
     int group_box_height =  rows * (TEXT_BOX_HEIGHT + MARGIN) + MARGIN;
 
     
@@ -98,10 +182,10 @@ void start_parameters(Fl_Window* win, const std::vector<Field>& fields){
 
     }
 
-    box_heights.push_back(group_box_height);
+    //box_heights.push_back(group_box_height);
     device_group->end();  // IMPORTANT!
     win->end();
-}
+} */
 
 void button_box(Fl_Window* win, int start_y){
     
@@ -109,7 +193,7 @@ void button_box(Fl_Window* win, int start_y){
     // --- Section 1: Device Info ---
 
     // POS X, POS Y, WIDTH, HEIGHT
-    Fl_Group* utility_buttons = new Fl_Group(BOX_START_X, start_y + ENTITY_SPACING,WINDOW_WIDTH -  MARGIN,(TEXT_BOX_HEIGHT + MARGIN) * 2, "Utility");
+    Fl_Group* utility_buttons = new Fl_Group(BOX_START_X, start_y + ENTITY_SPACING,WINDOW_WIDTH -  MARGIN,(TEXT_BOX_HEIGHT + MARGIN) * 2, "Utiliy");
     utility_buttons->box(FL_UP_BOX); // visualize bounds
     utility_buttons->align(FL_ALIGN_TOP_LEFT);
     utility_buttons->labelsize(20);
