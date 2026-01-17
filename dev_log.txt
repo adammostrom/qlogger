@@ -2,3 +2,6 @@
 
 [] Generaliz the box function so it can draw multiple boxes, make a struct for the box parameters to be passed into the function.
 [] Make the utility button box to draw (space) the buttons correctly like the box function does, have a list of buttons and what they do, then just give that list to the button box to draw them up.
+
+2026-01-17:
+Focused my work in the fltk subfolderr, as I feel that this is going to become the main program, the ui is turning out the way I expect. Its easy to work with and the abstractions are good. I made a Box struct and a draw box function, now any popup or subwindow should just need a window pointer by FLTK and then I can draw a box in that window for error messages etc.
