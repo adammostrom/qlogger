@@ -118,6 +118,9 @@ void save_to_file(Fl_Widget*, void* data) {
     if (!ctx) return;
     if (!ctx->in_field) return;
 
+    std::string name;
+
+
     std::ofstream out("log.md");
 
     out << "# Device Log\n\n";
