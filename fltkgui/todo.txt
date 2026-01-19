@@ -1,0 +1,4 @@
+[#] TODO: Make Struct for a box, with parameters: x, y, width, height, label, columns
+- Done 2026-01-18
+[] TODO: Make a clean way to either "create new file, or find existing file" -> make it a popup at the start of the program, find file = searches the folder "files" and reads the content of the file into the program (hard)
+[] Make a clean way to save new file by device id. basically break out the save button to only handle the input parameters, and the file naming outside of this.

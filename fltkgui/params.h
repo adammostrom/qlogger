@@ -1,0 +1,12 @@
+#pragma once
+
+
+#define WINDOW_HEIGHT 1200
+#define WINDOW_WIDTH 1500
+#define RIGHT_PANEL_MARGIN 200
+#define TEXT_BOX_HEIGHT 30
+#define INPUT_TEXT_BUFFER_SPACE 80
+#define MARGIN 25
+#define ENTITY_SPACING 40
+#define BOX_MARGINS 50
+#define BOX_START_X 20
