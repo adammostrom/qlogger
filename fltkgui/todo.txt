@@ -2,3 +2,4 @@
 - Done 2026-01-18
 [] TODO: Make a clean way to either "create new file, or find existing file" -> make it a popup at the start of the program, find file = searches the folder "files" and reads the content of the file into the program (hard)
 [] Make a clean way to save new file by device id. basically break out the save button to only handle the input parameters, and the file naming outside of this.
+[] Continue work on the search popup function, finilize it so that searching for logs in a folder becomes functional, fix button, separation of concerns, make folder structure, secure search pattern (only digits) etc.

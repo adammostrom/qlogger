@@ -5,11 +5,14 @@
 #include <FL/Fl_Multiline_Input.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Box.H>
 
 #include <fstream>
 #include <vector>
 #include <FL/fl_draw.H>
 #include <iostream>
+#include <sstream>
+
 
 #include "params.h"
 
@@ -49,6 +52,7 @@ void button_box(Fl_Window* win, int start_y);
 void draw_box(Fl_Window* win, Box& box, Freespace& freespace);
 void save_to_file(Fl_Widget*, void* data);
 void save_cb(Fl_Widget* w, void* data) ;
+void popup_cb(Fl_Widget*, void*);
 ///
 
 
@@ -73,7 +77,7 @@ int main() {
     Box_Data_Container* container = new Box_Data_Container();
     
     std::vector<Field> fields = {
-        {"Date:"}, {"Device ID:"}, {"Operator:"}, {"Comment:"}, {"TEST:"}, {"TEST:"},
+        {"Date:"}, {"Device ID:"}, {"Operatodasdasdasdasdasdasdasdasdasdasdr:"}, {"Comment:"}, {"TEST:"}, {"TEST:"},
     };
     
     //MENU_WINDOW(); // A temporary popup window
@@ -101,15 +105,129 @@ int main() {
     container->in_field = input_field;
 
     int button_width = 100;
-    Fl_Button* save =
-    new Fl_Button((WINDOW_WIDTH - RIGHT_PANEL_MARGIN) + button_width / 2, 50, button_width, 30, "Save");
 
+
+    Fl_Button* save =
+    new Fl_Button((WINDOW_WIDTH - RIGHT_PANEL_MARGIN) + button_width / 2, 50, button_width, 50, "Save");
+    
     save->callback(save_to_file, container);
+
+    Fl_Button* search = new Fl_Button((WINDOW_WIDTH - RIGHT_PANEL_MARGIN) + button_width / 2, 100, button_width, 50, "Search");
+    
+    search->callback(popup_cb);
+
 
 
     win.end();
     win.show();
     return Fl::run();
+}
+// Buttons needs to accept a Fl_Widget pointer and a nullpointer (data).
+void popup_cb(Fl_Widget*, void*){
+
+    int popup_length = 800;
+
+    Fl_Window* popup = new Fl_Window(WINDOW_WIDTH/2, 800, "Search Log");
+
+    int x = MARGIN;
+    int y = MARGIN;
+
+    // Get the windows width, subtract the margin times 2.
+    int w = popup->w() - 2 * MARGIN;
+
+    Fl_Box* label = new Fl_Box(x, y, w, 20, "Search for Device:");
+    
+    int search_box_height = 40;
+
+    Fl_Input* search = new Fl_Input(x, y + MARGIN, w, search_box_height);
+
+
+        // Text output
+    Fl_Text_Display* display = new Fl_Text_Display(x, y + search_box_height + MARGIN, w, popup->h() - 100); // Hardcoded for now
+    Fl_Text_Buffer* buffer = new Fl_Text_Buffer();
+    display->buffer(buffer);
+
+        // Search button
+    Fl_Button* go = new Fl_Button(400, 20, 80, 25, "Go");
+
+
+    /* function */
+    /*
+    A pointer to the function (the lambda)
+
+    A raw void* pointer (your new std::pair<...>)
+
+    Think of it as:
+
+    Button "go":
+    callback_fn = <that lambda>
+    user_data  = 0x7fffa1234   (heap address)
+    
+
+    Has no captures ([])
+
+    Therefore decays into a plain C function pointer
+
+    Matches FLTK’s required signature exactly
+    
+    Captured Lambdas are objects, not function pointers..
+
+    RUNTIME:
+
+    - User clicks Go → FLTK internally does:
+    - callback_fn(go_button, user_data);
+
+    Which becomes:
+
+    - lambda(go_button, 0x7fffa1234);
+
+    Now we are inside the lambda.
+
+    */ 
+    go->callback([](Fl_Widget*, void* data){
+        /* The data pointer which we pass later, and the data will have the Type(input, buffer) */
+
+
+        /*
+        data points to a heap-allocated std::pair
+
+        FLTK has no idea what’s inside
+
+        You must cast it back yourself
+
+        This cast says:
+
+        “Trust me — this void* actually points to a pair<Fl_Input*, Fl_Text_Buffer*>.”
+
+        
+        What ctx represents
+        ctx->first   → Fl_Input*       (search field)
+        ctx->second  → Fl_Text_Buffer* (output buffer)
+
+        This pair is your shared state.
+
+        FLTK does not manage this.
+        */
+        auto* ctx = static_cast<std::pair<Fl_Input*, Fl_Text_Buffer*>*>(data);
+
+        /* This pulls current text from the input field — not cached, not stored earlier. */
+        std::string query = ctx->first->value();
+
+        // Opens file
+        std::ifstream file("log.md");
+    
+        std::ostringstream out;
+        std::string line;
+
+        while (std::getline(file, line)) {
+            out << line << "\n";
+        }
+        ctx->second->text(out.str().c_str());
+
+    }, new std::pair<Fl_Input*, Fl_Text_Buffer*>(search, buffer));
+
+    popup->end();
+    popup->show();
 }
 
 void save_to_file(Fl_Widget*, void* data) {
